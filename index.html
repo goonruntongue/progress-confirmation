@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* common layout */
+        
+        * {
+            box-sizing: border-box;
+            font-family: "Oswald", "Noto Sans JP", sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            background: #f5f5f5;
+            /* color:#fff; */
+        }
+        
+        .container {
+            background: #fff;
+            padding: 2em 3em;
+        }
+        
+        h1 {
+            margin: 0 0 0.5em 0;
+        }
+        
+        .user {
+            margin-bottom: 3em;
+            border-bottom: 1px solid gray;
+        }
+        
+        .container {
+            width: min(90%, 500px);
+            margin: 1em auto;
+            border-radius: 12px;
+            box-shadow: inset 1px 2px 4px 0px #c1c1c1;
+        }
+        
+        .res {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .row div {
+            min-height: 50px;
+        }
+        
+        .row div:nth-of-type(even) {
+            display: none;
+        }
+        
+        .row-0 div {
+            padding-left: 2em;
+            border: 1px solid;
+            border-color: gray transparent transparent;
+        }
+        
+        .row div {
+            display: flex;
+            align-items: center;
+        }
+        
+        .row-0 div {
+            position: relative;
+            --default-color: #c9c9c9;
+            --done-color: coral;
+        }
+        
+        .row-0 div:not(:last-of-type)::before {
+            content: "";
+            display: block;
+            width: 0.5lh;
+            height: 0.5lh;
+            position: absolute;
+            top: calc(50% - 0.25lh);
+            left: 0;
+            /* border:1px solid #000; */
+            border-radius: 50px;
+            background: var(--default-color);
+            z-index: 2;
+        }
+        
+        .row-0 div:not(:last-of-type)::after {
+            content: "";
+            display: block;
+            width: 3px;
+            /* border:1px solid #000; */
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: calc(0.25lh - 1.5px);
+            background: var(--default-color);
+        }
+        
+        .done::before,
+        .done::after {
+            background: var(--done-color);
+        }
+        
+        .row-0 div.last::after {
+            display: none;
+        }
+        
+        .row-0 div {
+            position: relative;
+            --default-color: #e3e3e3;
+            --done-color: hsl(240 64% 66% / 1);
+        }
+        
+        .row-0 div.done::before,
+        .row-0 div.done:not(.now)::after {
+            background: var(--done-color);
+        }
+        
+        .row-0 div.done.now::after {
+            background: var(--default-color) !important;
+        }
+        
+        .row div:last-of-type {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>進捗確認ボード</h1>
+        </header>
+        <div class="user"></div>
+        <div class="res"></div>
+    </div>
+    <script>
+        fetch("https://script.google.com/macros/s/AKfycbwGnnh6uhb5Ns1Gwrk7hIMirmVRX2KWCg7Ii79SDB7AJZZ6WcZ1fkgYgjulHq2-b7DUdg/exec?action=json")
+            .then(res => res.json())
+            .then(entries => {
+                console.log(entries);
+                entries.forEach((entry, index) => {
+                    let rowDiv = document.createElement("div");
+                    rowDiv.classList.add(`row-${index}`);
+                    rowDiv.classList.add(`row`);
+                    let user = document.querySelector(".user");
+                    entry.forEach((value, index) => {
+                        if (index == 0) {
+                            return;
+                        } else if (index == 1) {
+                            if (value == "名前") return;
+                            let paragraph = document.createElement("p");
+                            paragraph.innerHTML = value + "<span>様</span>";
+                            user.append(paragraph);
+                        } else {
+                            let dataDiv = document.createElement("div");
+                            dataDiv.textContent = value;
+                            if (value == true) {
+                                dataDiv.classList.add("done");
+                            };
+                            rowDiv.append(dataDiv);
+                            document.querySelector(".res").append(rowDiv);
+                        }
+                    });
+                })
+
+                let contentDivs = document.querySelectorAll(".row-1 div");
+                let titleDivs = document.querySelectorAll(".row-0 div");
+                contentDivs.forEach((div, index) => {
+                    if (div.textContent == "true") {
+                        contentDivs[index - 1].classList.add("done");
+                        titleDivs[index].classList.add("done");
+                        titleDivs[index - 1].classList.add("done");
+                    }
+                });
+                setTimeout(() => {
+                    let now = document.querySelectorAll(".row-1 div.done").length;
+                    console.log(now);
+                    contentDivs[now - 2].classList.add("now");
+                    titleDivs[now - 2].classList.add("now");
+                    titleDivs[titleDivs.length - 3].classList.add("last");
+                }, 500)
+            })
+    </script>
+</body>
+
+</html>
