@@ -145,52 +145,58 @@
         <div class="res"></div>
     </div>
     <script>
-        fetch("https://script.google.com/macros/s/AKfycbwGnnh6uhb5Ns1Gwrk7hIMirmVRX2KWCg7Ii79SDB7AJZZ6WcZ1fkgYgjulHq2-b7DUdg/exec?action=json")
-            .then(res => res.json())
-            .then(entries => {
-                console.log(entries);
-                entries.forEach((entry, index) => {
-                    let rowDiv = document.createElement("div");
-                    rowDiv.classList.add(`row-${index}`);
-                    rowDiv.classList.add(`row`);
-                    let user = document.querySelector(".user");
-                    entry.forEach((value, index) => {
-                        if (index == 0) {
-                            return;
-                        } else if (index == 1) {
-                            if (value == "名前") return;
-                            let paragraph = document.createElement("p");
-                            paragraph.innerHTML = value + "<span>様</span>";
-                            user.append(paragraph);
-                        } else {
-                            let dataDiv = document.createElement("div");
-                            dataDiv.textContent = value;
-                            if (value == true) {
-                                dataDiv.classList.add("done");
-                            };
-                            rowDiv.append(dataDiv);
-                            document.querySelector(".res").append(rowDiv);
+        function fetchLongPolling() {
+
+            fetch("https://script.google.com/macros/s/AKfycbwGnnh6uhb5Ns1Gwrk7hIMirmVRX2KWCg7Ii79SDB7AJZZ6WcZ1fkgYgjulHq2-b7DUdg/exec?action=json")
+                .then(res => res.json())
+                .then(entries => {
+                    console.log(entries);
+                    entries.forEach((entry, index) => {
+                        let rowDiv = document.createElement("div");
+                        rowDiv.classList.add(`row-${index}`);
+                        rowDiv.classList.add(`row`);
+                        let user = document.querySelector(".user");
+                        entry.forEach((value, index) => {
+                            if (index == 0) {
+                                return;
+                            } else if (index == 1) {
+                                if (value == "名前") return;
+                                let paragraph = document.createElement("p");
+                                paragraph.innerHTML = value + "<span>様</span>";
+                                user.append(paragraph);
+                            } else {
+                                let dataDiv = document.createElement("div");
+                                dataDiv.textContent = value;
+                                if (value == true) {
+                                    dataDiv.classList.add("done");
+                                };
+                                rowDiv.append(dataDiv);
+                                document.querySelector(".res").append(rowDiv);
+                            }
+                        });
+                    })
+
+                    let contentDivs = document.querySelectorAll(".row-1 div");
+                    let titleDivs = document.querySelectorAll(".row-0 div");
+                    contentDivs.forEach((div, index) => {
+                        if (div.textContent == "true") {
+                            contentDivs[index - 1].classList.add("done");
+                            titleDivs[index].classList.add("done");
+                            titleDivs[index - 1].classList.add("done");
                         }
                     });
+                    setTimeout(() => {
+                        let now = document.querySelectorAll(".row-1 div.done").length;
+                        console.log(now);
+                        contentDivs[now - 2].classList.add("now");
+                        titleDivs[now - 2].classList.add("now");
+                        titleDivs[titleDivs.length - 3].classList.add("last");
+                    }, 500)
                 })
-
-                let contentDivs = document.querySelectorAll(".row-1 div");
-                let titleDivs = document.querySelectorAll(".row-0 div");
-                contentDivs.forEach((div, index) => {
-                    if (div.textContent == "true") {
-                        contentDivs[index - 1].classList.add("done");
-                        titleDivs[index].classList.add("done");
-                        titleDivs[index - 1].classList.add("done");
-                    }
-                });
-                setTimeout(() => {
-                    let now = document.querySelectorAll(".row-1 div.done").length;
-                    console.log(now);
-                    contentDivs[now - 2].classList.add("now");
-                    titleDivs[now - 2].classList.add("now");
-                    titleDivs[titleDivs.length - 3].classList.add("last");
-                }, 500)
-            })
+        }
+        setTimeout(() => {
+            fetchLongPolling();
+        }, 1000)
     </script>
 </body>
 
