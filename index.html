@@ -192,11 +192,11 @@
                         titleDivs[now - 2].classList.add("now");
                         titleDivs[titleDivs.length - 3].classList.add("last");
                     }, 500)
-                })
+                });
+            setTimeout(() => {
+                fetchLongPolling();
+            }, 1500)
         }
-        setTimeout(() => {
-            fetchLongPolling();
-        }, 1000)
     </script>
 </body>
 
