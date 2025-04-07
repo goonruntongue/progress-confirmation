@@ -147,6 +147,7 @@
     <script>
         function fetchLongPolling() {
 
+
             fetch("https://script.google.com/macros/s/AKfycbwGnnh6uhb5Ns1Gwrk7hIMirmVRX2KWCg7Ii79SDB7AJZZ6WcZ1fkgYgjulHq2-b7DUdg/exec?action=json")
                 .then(res => res.json())
                 .then(entries => {
@@ -193,10 +194,8 @@
                         titleDivs[titleDivs.length - 3].classList.add("last");
                     }, 500)
                 });
-            setTimeout(() => {
-                fetchLongPolling();
-            }, 1500)
         }
+        fetchLongPoiing();
     </script>
 </body>
 
