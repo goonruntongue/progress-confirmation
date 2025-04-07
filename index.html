@@ -134,6 +134,50 @@
             border-color: lightgray transparent transparent;
         }
     </style>
+    <style>
+        /* loader */
+        
+        .loader-wrap {
+            position: fixed;
+            inset: 0;
+            margin: auto;
+            background: radial-gradient(#f6f3ff, #e3dcff);
+            z-index: 10;
+            background-size: max(100vw, 100vh) max(100vw, 100vh);
+            background-repeat: no-repeat;
+        }
+        
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .loader {
+            width: calc(6*30px);
+            height: 50px;
+            display: flex;
+            color: #7171e0;
+            filter: drop-shadow(30px 25px 0 currentColor) drop-shadow(60px 0 0 currentColor) drop-shadow(120px 0 0 currentColor);
+            clip-path: inset(0 100% 0 0);
+            animation: l12 2s infinite steps(7);
+        }
+        
+        .loader:before {
+            content: "";
+            width: 25px;
+            height: 25px;
+            --c: no-repeat radial-gradient(farthest-side, #7171e0 92%, #0000);
+            background: var(--c) left /70% 70%, var(--c) right/20% 20%, var(--c) top 0 right 15%/20% 20%, var(--c) bottom 0 right 15%/20% 20%;
+        }
+        
+        @keyframes l12 {
+            100% {
+                clip-path: inset(0 -30px 0 0)
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -143,8 +187,26 @@
         </header>
         <div class="user"></div>
         <div class="res"></div>
+        <div class="loader-wrap">
+            <div class="loader"></div>
+        </div>
     </div>
     <script>
+        function loaderHide() {
+            let loader = document.querySelector(".loader-wrap");
+            fadeOut(loader);
+        }
+        let n = 1;
+
+        function fadeOut(elem) {
+            n -= 0.1;
+            elem.style.opacity = n;
+            if (n < 0) {
+                elem.style.display = "none";
+            }
+            setTimeout(fadeOut, 50, elem);
+        }
+
         function fetchAndRender() {
             fetch("https://script.google.com/macros/s/AKfycbwGnnh6uhb5Ns1Gwrk7hIMirmVRX2KWCg7Ii79SDB7AJZZ6WcZ1fkgYgjulHq2-b7DUdg/exec?action=json")
                 .then(res => res.json())
@@ -153,6 +215,7 @@
                     let res = document.querySelector(".res");
                     user.innerHTML = "";
                     res.innerHTML = "";
+                    loaderHide();
                     console.log(entries);
                     entries.forEach((entry, index) => {
                         let rowDiv = document.createElement("div");
