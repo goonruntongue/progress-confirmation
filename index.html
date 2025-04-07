@@ -198,13 +198,19 @@
         }
         let n = 1;
 
+        let fadeTimerID = null;
+
         function fadeOut(elem) {
-            n -= 0.1;
-            elem.style.opacity = n;
-            if (n < 0) {
-                elem.style.display = "none";
+            if (n >= 0) {
+                n -= 0.1;
+                elem.style.opacity = n;
+                if (n < 0) {
+                    elem.style.display = "none";
+                    clearTimeout(fadeTimerID);
+                    return;
+                }
+                fadeTimerID = setTimeout(() => fadeOut(elem), 50);
             }
-            setTimeout(fadeOut, 50, elem);
         }
 
         function fetchAndRender() {
@@ -216,7 +222,7 @@
                     user.innerHTML = "";
                     res.innerHTML = "";
                     loaderHide();
-                    console.log(entries);
+                    // console.log(entries);
                     entries.forEach((entry, index) => {
                         let rowDiv = document.createElement("div");
                         rowDiv.classList.add(`row-${index}`);
@@ -253,7 +259,7 @@
                     });
                     setTimeout(() => {
                         let now = document.querySelectorAll(".row-1 div.done").length;
-                        console.log(now);
+                        // console.log(now);
                         contentDivs[now - 2].classList.add("now");
                         titleDivs[now - 2].classList.add("now");
                         titleDivs[titleDivs.length - 3].classList.add("last");
